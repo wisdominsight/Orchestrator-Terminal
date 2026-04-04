@@ -250,6 +250,7 @@
           <select id="modeSelect">
             <option value="antiyesman">Anti-Yes Man</option>
             <option value="konvergensi">Konvergensi</option>
+            <option value="kristalisasi">Kristalisasi</option>
             <option value="custom">Custom</option>
           </select>
           <textarea id="customInstruction" class="custom-hidden" placeholder="Tulis instruksi custom kamu..."></textarea>
@@ -321,8 +322,9 @@
   };
 
   var MODE_TEXT = {
-    antiyesman: 'jangan asal yes man. apapun pendapatmu yang terbaik meski beda, aku sangat terbuka. jadilah obyektif, kritis, bijak dan ahli-berpengalaman dalam domain ini. bagaimana menurutmu?',
-    konvergensi: 'jadilah obyektif, kritis, bijak dan ahli-berpengalaman dalam domain ini. bagaimana menurutmu?'
+    antiyesman: 'jangan asal yes man. apapun pendapatmu yang terbaik meski beda aku sangat terbuka, jika sepakat cukup perkuat. jadilah obyektif, kritis, bijak dan ahli-berpengalaman dalam domain ini. bagaimana menurutmu?',
+    konvergensi: 'Mari berdiskusi sampai tercapai satu kesepakatan bersama. Perbedaan pendapat dan sanggahan tidak masalah, selama tidak ada kesimpulan sepihak. Diskusi boleh berlangsung banyak putaran, karena aku yang berhadapan langsung dengan realitas di lapangan. Mengetahui respons pihak lain saat sarannya disanggah justru membuka wawasan baru. Tidak ada yang sia-sia. Jadilah obyektif, kritis, bijak dan ahli-berpengalaman dalam domain ini dan dalam membangun sistem. bagaimana menurutmu?',
+    kristalisasi: 'Diskusi sudah konvergen. Tugasmu sekarang: (1) Generate KARTU KRISTALISASI dengan format: JUDUL, TRIGGER, KONSENSUS, PRINSIP BARU, KONEKSI, TAGS [DOMAIN][PROJECT][PHASE][TYPE], ROUTE (SYSTEM-IMPACT/THINKING-PRINCIPLE/PARKING), ACTION. (2) Generate ORC-STATE_PATCH: section mana yang berubah + isi baru. Jangan diskusi lagi, langsung output.'
   };
 
   var ROTATION = {
@@ -381,10 +383,14 @@
     if(m==='custom') els.custom.classList.remove('custom-hidden');
     else els.custom.classList.add('custom-hidden');
   }
+  var NAV_BLOK = '\n---\nWAJIB tutup setiap responmu dengan blok ini:\n=== NAVIGASI ORCHESTRATOR ===\nSTATE: [EXPLORING / DISCUSSING / READY_TO_CLOSE / CLOSED]\nNEXT: [rekomendasi langkah selanjutnya, spesifik]\nGAP: [konteks yang kurang / "tidak ada"]\n===\n\nJika STATE = READY_TO_CLOSE atau CLOSED, WAJIB tambahkan:\n=== FRICTION LOG ===\n| FRICTION | CATATAN |\n(isi dengan friction/masalah yang terjadi selama sesi ini: miskomunikasi, AI salah paham konteks, step yang ribet, constraint yang tidak terdeteksi, human error yang terjadi. Jika tidak ada friction: "Tidak ada friction sesi ini.")\n===\nCATATAN: Friction Log ini untuk Darma simpan ke GSheets. JANGAN masukkan ke dalam ORC-STATE saat generate patch.';
+
   function getInstruction(){
     var m=els.mode.value;
-    if(m==='custom') return els.custom.value.trim();
-    return MODE_TEXT[m]||'';
+    var base;
+    if(m==='custom') base=els.custom.value.trim();
+    else base=MODE_TEXT[m]||'';
+    return base ? base + NAV_BLOK : '';
   }
 
   // FOCUS MODE
