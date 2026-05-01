@@ -12,10 +12,12 @@
     --border: #3a3a44;
     --text: #e0e0e6;
     --text-dim: #8888a0;
+    --accent-kimi: #e879f9;
     --accent-gpt: #74aa9c;
     --accent-gemini: #8b9cf7;
     --accent-zai: #b8c94e;
     --accent-claude: #d4956a;
+    --accent-deepseek: #5caddd;
     --btn-bg: #32323c;
     --btn-hover: #3e3e4a;
     --btn-active: #4a4a56;
@@ -57,21 +59,35 @@
     color:var(--text-dim); margin-bottom:1px;
   }
 
+  .input-section {
+    flex:1; display:flex; flex-direction:column;
+    padding:12px; gap:6px; overflow-y:auto;
+  }
+  .input-section.has-focused { overflow-y:hidden; }
+
+  .darma-grid {
+    display:grid; grid-template-columns:1fr 1fr; gap:6px;
+  }
+  .darma-grid.has-focused {
+    display:flex; flex-direction:column; flex:1; min-height:0;
+  }
   .darma-group {
     display:flex; flex-direction:column; gap:2px;
     transition: all 0.2s ease;
   }
   .darma-group.hidden-by-focus { display:none !important; }
-  .darma-group.focused { flex:1; }
+  .darma-group.focused { flex:1; min-height:0; display:flex; flex-direction:column; }
   .darma-header {
     display:flex; align-items:center; justify-content:space-between;
     cursor:pointer; padding:3px 0; user-select:none;
   }
   .darma-label { font-size:11px; font-weight:600; letter-spacing:0.3px; }
+  .darma-label.kimi { color:var(--accent-kimi); }
   .darma-label.gpt { color:var(--accent-gpt); }
   .darma-label.gemini { color:var(--accent-gemini); }
   .darma-label.zai { color:var(--accent-zai); }
   .darma-label.claude { color:var(--accent-claude); }
+  .darma-label.deepseek { color:var(--accent-deepseek); }
 
   .focus-btn {
     font-size:10px; color:var(--text-dim); background:none; border:1px solid var(--border);
@@ -86,16 +102,20 @@
     border:1px solid var(--border); border-radius:4px;
     padding:8px 10px; font-family:inherit; font-size:12px;
     line-height:1.4; outline:none; transition:border-color 0.2s;
+    overflow-y:hidden;
   }
+  .darma-textarea:focus, .darma-textarea.scrollable { overflow-y:auto; }
   .darma-group.focused .darma-textarea {
-    flex:1; min-height:0; max-height:none; resize:none;
+    flex:1; min-height:0; max-height:none; resize:none; overflow-y:auto;
   }
   .darma-textarea:focus { border-color:var(--text-dim); }
   .darma-textarea::placeholder { color:var(--text-dim); }
+  .darma-textarea.kimi:focus { border-color:var(--accent-kimi); }
   .darma-textarea.gpt:focus { border-color:var(--accent-gpt); }
   .darma-textarea.gemini:focus { border-color:var(--accent-gemini); }
   .darma-textarea.zai:focus { border-color:var(--accent-zai); }
   .darma-textarea.claude:focus { border-color:var(--accent-claude); }
+  .darma-textarea.deepseek:focus { border-color:var(--accent-deepseek); }
 
   .controls-area { display:flex; flex-direction:column; gap:6px; flex-shrink:0; }
   .controls-area.hidden-by-focus { display:none !important; }
@@ -113,11 +133,24 @@
     border:1px solid var(--border); border-radius:4px;
     padding:8px 10px; font-family:inherit; font-size:12px;
     line-height:1.4; resize:vertical; min-height:50px; max-height:120px;
-    outline:none; transition:border-color 0.2s;
+    outline:none; transition:border-color 0.2s, max-height 0.2s;
   }
-  #customInstruction:focus { border-color:var(--text-dim); }
+  #customInstruction:focus { border-color:var(--text-dim); max-height:320px; }
   #customInstruction::placeholder { color:var(--text-dim); }
   .custom-hidden { display:none !important; }
+
+  .custom-header {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:3px 0; cursor:pointer; user-select:none;
+  }
+  .controls-area.custom-focused { flex:1; min-height:0; display:flex; flex-direction:column; overflow:hidden; }
+  .controls-area.custom-focused .mode-section { flex:1; min-height:0; display:flex; flex-direction:column; }
+  .controls-area.custom-focused .btn-group { display:none; }
+  .controls-area.custom-focused #modeSelect { display:none; }
+  .controls-area.custom-focused #customInstruction {
+    flex:1; min-height:0; max-height:none; resize:none; overflow-y:auto; display:block !important;
+  }
+  .controls-area.custom-focused .focus-btn { color:var(--save-color); border-color:var(--save-color); }
 
   .btn-group { display:flex; flex-direction:column; gap:5px; }
   .btn-copy {
@@ -129,10 +162,12 @@
   }
   .btn-copy:hover { background:var(--btn-hover); }
   .btn-copy:active { background:var(--btn-active); }
+  .btn-copy[data-target="kimi"] .dot { color:var(--accent-kimi); }
   .btn-copy[data-target="gpt"] .dot { color:var(--accent-gpt); }
   .btn-copy[data-target="gemini"] .dot { color:var(--accent-gemini); }
   .btn-copy[data-target="zai"] .dot { color:var(--accent-zai); }
   .btn-copy[data-target="claude"] .dot { color:var(--accent-claude); }
+  .btn-copy[data-target="deepseek"] .dot { color:var(--accent-deepseek); }
   .btn-copy.copied { border-color:var(--save-color); color:var(--save-color); }
 
   .last-badge {
@@ -168,10 +203,12 @@
     transition:all 0.2s; user-select:none;
   }
   .tab:hover { color:var(--text); background:var(--surface-alt); }
+  .tab[data-tab="kimi"].active { color:var(--accent-kimi); border-bottom-color:var(--accent-kimi); }
   .tab[data-tab="gpt"].active { color:var(--accent-gpt); border-bottom-color:var(--accent-gpt); }
   .tab[data-tab="gemini"].active { color:var(--accent-gemini); border-bottom-color:var(--accent-gemini); }
   .tab[data-tab="zai"].active { color:var(--accent-zai); border-bottom-color:var(--accent-zai); }
   .tab[data-tab="claude"].active { color:var(--accent-claude); border-bottom-color:var(--accent-claude); }
+  .tab[data-tab="deepseek"].active { color:var(--accent-deepseek); border-bottom-color:var(--accent-deepseek); }
   .tab .shortcut { font-size:10px; opacity:0.5; margin-left:3px; }
 
   .panels { flex:1; position:relative; overflow:hidden; }
@@ -183,10 +220,12 @@
     font-family:inherit; font-size:13px; line-height:1.5;
     resize:none; outline:none; transition:border-color 0.2s;
   }
+  .panel[data-panel="kimi"] textarea:focus { border-color:var(--accent-kimi); }
   .panel[data-panel="gpt"] textarea:focus { border-color:var(--accent-gpt); }
   .panel[data-panel="gemini"] textarea:focus { border-color:var(--accent-gemini); }
   .panel[data-panel="zai"] textarea:focus { border-color:var(--accent-zai); }
   .panel[data-panel="claude"] textarea:focus { border-color:var(--accent-claude); }
+  .panel[data-panel="deepseek"] textarea:focus { border-color:var(--accent-deepseek); }
   .panel textarea::placeholder { color:var(--text-dim); }
 
   #fileInput { display:none; }
@@ -202,7 +241,7 @@
 <body>
 
 <div class="header">
-  <div class="header-title"><span>OT</span> v0.1</div>
+  <div class="header-title"><span>OT</span> v0.1r4</div>
   <div class="save-indicator" id="saveIndicator">💾</div>
 </div>
 
@@ -211,6 +250,16 @@
     <div class="input-section">
 
       <div class="section-label">Respon Darma per AI</div>
+
+      <div class="darma-grid" id="darmaGrid">
+
+      <div class="darma-group" data-ai="kimi">
+        <div class="darma-header">
+          <div class="darma-label kimi">● Kimi</div>
+          <button class="focus-btn" title="Focus mode">⤢</button>
+        </div>
+        <textarea id="darmaKimi" class="darma-textarea kimi" placeholder="Respon/arahan untuk Kimi..."></textarea>
+      </div>
 
       <div class="darma-group" data-ai="gpt">
         <div class="darma-header">
@@ -244,20 +293,36 @@
         <textarea id="darmaClaude" class="darma-textarea claude" placeholder="Respon/arahan untuk Claude..."></textarea>
       </div>
 
+      <div class="darma-group" data-ai="deepseek">
+        <div class="darma-header">
+          <div class="darma-label deepseek">● DeepSeek</div>
+          <button class="focus-btn" title="Focus mode">⤢</button>
+        </div>
+        <textarea id="darmaDeepseek" class="darma-textarea deepseek" placeholder="Respon/arahan untuk DeepSeek..."></textarea>
+      </div>
+
+      </div><!-- /darma-grid -->
+
       <div class="controls-area" id="controlsArea">
         <div class="mode-section">
-          <div class="section-label">Mode Instruksi</div>
+          <div class="custom-header" id="customHeader">
+            <div class="section-label">Mode Instruksi</div>
+            <button class="focus-btn" id="customFocusBtn" title="Expand custom">⤢</button>
+          </div>
           <select id="modeSelect">
             <option value="antiyesman">Anti-Yes Man</option>
             <option value="konvergensi">Konvergensi</option>
             <option value="kristalisasi">Kristalisasi</option>
-            <option value="custom">Custom</option>
+            <option value="custom" selected>Custom</option>
           </select>
           <textarea id="customInstruction" class="custom-hidden" placeholder="Tulis instruksi custom kamu..."></textarea>
         </div>
 
         <div class="btn-group">
           <div class="section-label">Copy Context</div>
+          <button class="btn-copy" data-target="kimi">
+            <span class="dot">●</span> Copy for Kimi <span class="last-badge">LAST</span>
+          </button>
           <button class="btn-copy" data-target="gpt">
             <span class="dot">●</span> Copy for ChatGPT <span class="last-badge">LAST</span>
           </button>
@@ -269,6 +334,9 @@
           </button>
           <button class="btn-copy" data-target="claude">
             <span class="dot">●</span> Copy for Claude <span class="last-badge">LAST</span>
+          </button>
+          <button class="btn-copy" data-target="deepseek">
+            <span class="dot">●</span> Copy for DeepSeek <span class="last-badge">LAST</span>
           </button>
         </div>
 
@@ -284,13 +352,18 @@
 
   <div class="col-right">
     <div class="tabs">
-      <div class="tab active" data-tab="gpt">ChatGPT <span class="shortcut">Ctrl+1</span></div>
-      <div class="tab" data-tab="gemini">Gemini <span class="shortcut">Ctrl+2</span></div>
-      <div class="tab" data-tab="zai">Z.ai <span class="shortcut">Ctrl+3</span></div>
-      <div class="tab" data-tab="claude">Claude <span class="shortcut">Ctrl+4</span></div>
+      <div class="tab active" data-tab="kimi">Kimi <span class="shortcut">Ctrl+1</span></div>
+      <div class="tab" data-tab="gpt">ChatGPT <span class="shortcut">Ctrl+2</span></div>
+      <div class="tab" data-tab="gemini">Gemini <span class="shortcut">Ctrl+3</span></div>
+      <div class="tab" data-tab="zai">Z.ai <span class="shortcut">Ctrl+4</span></div>
+      <div class="tab" data-tab="claude">Claude <span class="shortcut">Ctrl+5</span></div>
+      <div class="tab" data-tab="deepseek">DeepSeek <span class="shortcut">Ctrl+6</span></div>
     </div>
     <div class="panels">
-      <div class="panel active" data-panel="gpt">
+      <div class="panel active" data-panel="kimi">
+        <textarea id="respKimi" placeholder="Paste respon Kimi di sini..."></textarea>
+      </div>
+      <div class="panel" data-panel="gpt">
         <textarea id="respGpt" placeholder="Paste respon ChatGPT di sini..."></textarea>
       </div>
       <div class="panel" data-panel="gemini">
@@ -301,6 +374,9 @@
       </div>
       <div class="panel" data-panel="claude">
         <textarea id="respClaude" placeholder="Paste respon Claude di sini..."></textarea>
+      </div>
+      <div class="panel" data-panel="deepseek">
+        <textarea id="respDeepseek" placeholder="Paste respon DeepSeek di sini..."></textarea>
       </div>
     </div>
   </div>
@@ -313,10 +389,12 @@
   'use strict';
 
   var SK = {
-    DARMA_GPT: 'ot_darma_gpt', DARMA_GEMINI: 'ot_darma_gemini',
+    DARMA_KIMI: 'ot_darma_kimi', DARMA_GPT: 'ot_darma_gpt', DARMA_GEMINI: 'ot_darma_gemini',
     DARMA_ZAI: 'ot_darma_zai', DARMA_CLAUDE: 'ot_darma_claude',
-    RESP_GPT: 'ot_resp_gpt', RESP_GEMINI: 'ot_resp_gemini',
+    DARMA_DEEPSEEK: 'ot_darma_deepseek',
+    RESP_KIMI: 'ot_resp_kimi', RESP_GPT: 'ot_resp_gpt', RESP_GEMINI: 'ot_resp_gemini',
     RESP_ZAI: 'ot_resp_zai', RESP_CLAUDE: 'ot_resp_claude',
+    RESP_DEEPSEEK: 'ot_resp_deepseek',
     MODE: 'ot_mode', CUSTOM: 'ot_custom_instruction',
     TAB: 'ot_active_tab', LAST_COPY: 'ot_last_copy'
   };
@@ -328,21 +406,29 @@
   };
 
   var ROTATION = {
-    gpt: ['gemini','zai','claude'], gemini: ['zai','claude','gpt'],
-    zai: ['claude','gpt','gemini'], claude: ['gpt','gemini','zai']
+    kimi:     ['gpt','gemini','zai','claude','deepseek'],
+    gpt:      ['gemini','zai','claude','deepseek','kimi'],
+    gemini:   ['zai','claude','deepseek','kimi','gpt'],
+    zai:      ['claude','deepseek','kimi','gpt','gemini'],
+    claude:   ['deepseek','kimi','gpt','gemini','zai'],
+    deepseek: ['kimi','gpt','gemini','zai','claude']
   };
 
-  var AI_LABEL = { gpt:'respon chatgpt', gemini:'respon gemini', zai:'respon z.ai', claude:'respon claude' };
+  var AI_LABEL = { kimi:'respon kimi', gpt:'respon chatgpt', gemini:'respon gemini', zai:'respon z.ai', claude:'respon claude', deepseek:'respon deepseek' };
 
   var els = {
+    darmaKimi: document.getElementById('darmaKimi'),
     darmaGpt: document.getElementById('darmaGpt'),
     darmaGemini: document.getElementById('darmaGemini'),
     darmaZai: document.getElementById('darmaZai'),
     darmaClaude: document.getElementById('darmaClaude'),
+    darmaDeepseek: document.getElementById('darmaDeepseek'),
+    respKimi: document.getElementById('respKimi'),
     respGpt: document.getElementById('respGpt'),
     respGemini: document.getElementById('respGemini'),
     respZai: document.getElementById('respZai'),
     respClaude: document.getElementById('respClaude'),
+    respDeepseek: document.getElementById('respDeepseek'),
     mode: document.getElementById('modeSelect'),
     custom: document.getElementById('customInstruction'),
     saveInd: document.getElementById('saveIndicator'),
@@ -350,8 +436,8 @@
     controls: document.getElementById('controlsArea')
   };
 
-  var darmaMap = { gpt:els.darmaGpt, gemini:els.darmaGemini, zai:els.darmaZai, claude:els.darmaClaude };
-  var respMap = { gpt:els.respGpt, gemini:els.respGemini, zai:els.respZai, claude:els.respClaude };
+  var darmaMap = { kimi:els.darmaKimi, gpt:els.darmaGpt, gemini:els.darmaGemini, zai:els.darmaZai, claude:els.darmaClaude, deepseek:els.darmaDeepseek };
+  var respMap = { kimi:els.respKimi, gpt:els.respGpt, gemini:els.respGemini, zai:els.respZai, claude:els.respClaude, deepseek:els.respDeepseek };
 
   // DEBOUNCE
   var timers = {};
@@ -364,14 +450,18 @@
     }, 2000);
   }
 
+  els.darmaKimi.addEventListener('input', function(){debounceSave(SK.DARMA_KIMI,this.value);});
   els.darmaGpt.addEventListener('input', function(){debounceSave(SK.DARMA_GPT,this.value);});
   els.darmaGemini.addEventListener('input', function(){debounceSave(SK.DARMA_GEMINI,this.value);});
   els.darmaZai.addEventListener('input', function(){debounceSave(SK.DARMA_ZAI,this.value);});
   els.darmaClaude.addEventListener('input', function(){debounceSave(SK.DARMA_CLAUDE,this.value);});
+  els.darmaDeepseek.addEventListener('input', function(){debounceSave(SK.DARMA_DEEPSEEK,this.value);});
+  els.respKimi.addEventListener('input', function(){debounceSave(SK.RESP_KIMI,this.value);});
   els.respGpt.addEventListener('input', function(){debounceSave(SK.RESP_GPT,this.value);});
   els.respGemini.addEventListener('input', function(){debounceSave(SK.RESP_GEMINI,this.value);});
   els.respZai.addEventListener('input', function(){debounceSave(SK.RESP_ZAI,this.value);});
   els.respClaude.addEventListener('input', function(){debounceSave(SK.RESP_CLAUDE,this.value);});
+  els.respDeepseek.addEventListener('input', function(){debounceSave(SK.RESP_DEEPSEEK,this.value);});
   els.custom.addEventListener('input', function(){debounceSave(SK.CUSTOM,this.value);});
 
   // MODE
@@ -407,12 +497,16 @@
 
   function toggleFocusMode(ai){
     var groups = document.querySelectorAll('.darma-group');
+    var grid = document.getElementById('darmaGrid');
+    var inputSection = grid ? grid.closest('.input-section') : null;
     if(focusedAi===ai){
       focusedAi=null;
       for(var i=0;i<groups.length;i++){
         groups[i].classList.remove('hidden-by-focus','focused');
       }
       els.controls.classList.remove('hidden-by-focus');
+      if(grid) grid.classList.remove('has-focused');
+      if(inputSection) inputSection.classList.remove('has-focused');
     } else {
       focusedAi=ai;
       for(var j=0;j<groups.length;j++){
@@ -426,9 +520,50 @@
         }
       }
       els.controls.classList.add('hidden-by-focus');
+      if(grid) grid.classList.add('has-focused');
+      if(inputSection) inputSection.classList.add('has-focused');
       darmaMap[ai].focus();
     }
   }
+
+  // Klik textarea darma = expand (hanya kalau belum focused AI itu)
+  var darmaTextareas = document.querySelectorAll('.darma-textarea');
+  for(var d=0;d<darmaTextareas.length;d++){
+    (function(ta){
+      ta.addEventListener('click',function(){
+        var ai = ta.closest('.darma-group').getAttribute('data-ai');
+        if(focusedAi !== ai) toggleFocusMode(ai);
+      });
+    })(darmaTextareas[d]);
+  }
+
+  // CUSTOM INSTRUCTION EXPAND MODE
+  var customFocused = false;
+  var controlsEl = document.getElementById('controlsArea');
+  var customHeader = document.getElementById('customHeader');
+  var customInputSection = document.querySelector('.input-section');
+
+  function toggleCustomFocus(){
+    if(customFocused){
+      customFocused = false;
+      controlsEl.classList.remove('custom-focused');
+      customInputSection.classList.remove('has-focused');
+    } else {
+      customFocused = true;
+      controlsEl.classList.add('custom-focused');
+      customInputSection.classList.add('has-focused');
+      els.custom.focus();
+    }
+  }
+
+  if(customHeader){
+    customHeader.addEventListener('click', function(e){
+      toggleCustomFocus();
+    });
+  }
+  els.custom.addEventListener('click', function(){
+    if(!customFocused) toggleCustomFocus();
+  });
 
   // COPY ROTATIONAL
   function copyFor(target){
@@ -506,6 +641,8 @@
     var ps=document.querySelectorAll('.panel');
     for(var j=0;j<ps.length;j++) ps[j].classList.toggle('active',ps[j].getAttribute('data-panel')===tab);
     try{localStorage.setItem(SK.TAB,tab);}catch(e){}
+    var activePanel=document.querySelector('.panel[data-panel="'+tab+'"]');
+    if(activePanel){var ta=activePanel.querySelector('textarea');if(ta) ta.focus();}
   }
   var tabEls=document.querySelectorAll('.tab');
   for(var i=0;i<tabEls.length;i++){
@@ -514,21 +651,24 @@
 
   // SHORTCUTS
   document.addEventListener('keydown',function(e){
-    var tag=document.activeElement.tagName.toLowerCase();
-    if(tag==='textarea'||tag==='input'||tag==='select') return;
-    if(e.ctrlKey&&e.key==='1'){e.preventDefault();switchTab('gpt');}
-    if(e.ctrlKey&&e.key==='2'){e.preventDefault();switchTab('gemini');}
-    if(e.ctrlKey&&e.key==='3'){e.preventDefault();switchTab('zai');}
-    if(e.ctrlKey&&e.key==='4'){e.preventDefault();switchTab('claude');}
+    if(e.ctrlKey&&e.key==='1'){e.preventDefault();switchTab('kimi');}
+    if(e.ctrlKey&&e.key==='2'){e.preventDefault();switchTab('gpt');}
+    if(e.ctrlKey&&e.key==='3'){e.preventDefault();switchTab('gemini');}
+    if(e.ctrlKey&&e.key==='4'){e.preventDefault();switchTab('zai');}
+    if(e.ctrlKey&&e.key==='5'){e.preventDefault();switchTab('claude');}
+    if(e.ctrlKey&&e.key==='6'){e.preventDefault();switchTab('deepseek');}
   });
 
   // CLEAR ALL
   document.getElementById('btnClear').addEventListener('click',function(){
     if(!confirm('Yakin hapus semua?')) return;
-    els.darmaGpt.value=''; els.darmaGemini.value=''; els.darmaZai.value=''; els.darmaClaude.value='';
-    els.respGpt.value=''; els.respGemini.value=''; els.respZai.value=''; els.respClaude.value='';
+    els.darmaKimi.value=''; els.darmaGpt.value=''; els.darmaGemini.value=''; els.darmaZai.value=''; els.darmaClaude.value=''; els.darmaDeepseek.value='';
+    els.respKimi.value=''; els.respGpt.value=''; els.respGemini.value=''; els.respZai.value=''; els.respClaude.value=''; els.respDeepseek.value='';
     els.custom.value=''; els.mode.value='antiyesman'; toggleCustom('antiyesman');
     if(focusedAi) toggleFocusMode(focusedAi);
+    if(customFocused) toggleCustomFocus();
+    var grid=document.getElementById('darmaGrid');
+    if(grid){ grid.classList.remove('has-focused'); var s=grid.closest('.input-section'); if(s) s.classList.remove('has-focused'); }
     var bs=document.querySelectorAll('.btn-copy');
     for(var i=0;i<bs.length;i++) bs[i].classList.remove('last-copy');
     for(var k in timers){if(timers[k]) clearTimeout(timers[k]);}
@@ -540,11 +680,13 @@
   // SAVE
   document.getElementById('btnSave').addEventListener('click',function(){
     var data={
-      version:'0.1r2',
-      darmaGpt:els.darmaGpt.value, darmaGemini:els.darmaGemini.value,
+      version:'0.1r4',
+      darmaKimi:els.darmaKimi.value, darmaGpt:els.darmaGpt.value, darmaGemini:els.darmaGemini.value,
       darmaZai:els.darmaZai.value, darmaClaude:els.darmaClaude.value,
-      respGpt:els.respGpt.value, respGemini:els.respGemini.value,
+      darmaDeepseek:els.darmaDeepseek.value,
+      respKimi:els.respKimi.value, respGpt:els.respGpt.value, respGemini:els.respGemini.value,
       respZai:els.respZai.value, respClaude:els.respClaude.value,
+      respDeepseek:els.respDeepseek.value,
       mode:els.mode.value, customInstruction:els.custom.value,
       activeTab:getActiveTab(), lastCopy:getLastCopy()
     };
@@ -585,24 +727,30 @@
       }
       if(!confirm('Ini akan menimpa semua data saat ini. Lanjutkan?')) return;
 
-      els.darmaGpt.value=data.darmaGpt||''; els.darmaGemini.value=data.darmaGemini||'';
+      els.darmaKimi.value=data.darmaKimi||''; els.darmaGpt.value=data.darmaGpt||''; els.darmaGemini.value=data.darmaGemini||'';
       els.darmaZai.value=data.darmaZai||''; els.darmaClaude.value=data.darmaClaude||'';
-      els.respGpt.value=data.respGpt||''; els.respGemini.value=data.respGemini||'';
+      els.darmaDeepseek.value=data.darmaDeepseek||'';
+      els.respKimi.value=data.respKimi||''; els.respGpt.value=data.respGpt||''; els.respGemini.value=data.respGemini||'';
       els.respZai.value=data.respZai||''; els.respClaude.value=data.respClaude||'';
+      els.respDeepseek.value=data.respDeepseek||'';
       els.mode.value=data.mode||'antiyesman'; els.custom.value=data.customInstruction||'';
       toggleCustom(els.mode.value);
       if(data.activeTab) switchTab(data.activeTab);
       if(data.lastCopy) updateLastIndicator(data.lastCopy);
 
       try{
+        localStorage.setItem(SK.DARMA_KIMI,els.darmaKimi.value);
         localStorage.setItem(SK.DARMA_GPT,els.darmaGpt.value);
         localStorage.setItem(SK.DARMA_GEMINI,els.darmaGemini.value);
         localStorage.setItem(SK.DARMA_ZAI,els.darmaZai.value);
         localStorage.setItem(SK.DARMA_CLAUDE,els.darmaClaude.value);
+        localStorage.setItem(SK.DARMA_DEEPSEEK,els.darmaDeepseek.value);
+        localStorage.setItem(SK.RESP_KIMI,els.respKimi.value);
         localStorage.setItem(SK.RESP_GPT,els.respGpt.value);
         localStorage.setItem(SK.RESP_GEMINI,els.respGemini.value);
         localStorage.setItem(SK.RESP_ZAI,els.respZai.value);
         localStorage.setItem(SK.RESP_CLAUDE,els.respClaude.value);
+        localStorage.setItem(SK.RESP_DEEPSEEK,els.respDeepseek.value);
         localStorage.setItem(SK.MODE,els.mode.value);
         localStorage.setItem(SK.CUSTOM,els.custom.value);
         localStorage.setItem(SK.TAB,data.activeTab||'gpt');
@@ -615,14 +763,18 @@
   // AUTO-LOAD
   function loadFromStorage(){
     try{
+      els.darmaKimi.value=localStorage.getItem(SK.DARMA_KIMI)||'';
       els.darmaGpt.value=localStorage.getItem(SK.DARMA_GPT)||'';
       els.darmaGemini.value=localStorage.getItem(SK.DARMA_GEMINI)||'';
       els.darmaZai.value=localStorage.getItem(SK.DARMA_ZAI)||'';
       els.darmaClaude.value=localStorage.getItem(SK.DARMA_CLAUDE)||'';
+      els.darmaDeepseek.value=localStorage.getItem(SK.DARMA_DEEPSEEK)||'';
+      els.respKimi.value=localStorage.getItem(SK.RESP_KIMI)||'';
       els.respGpt.value=localStorage.getItem(SK.RESP_GPT)||'';
       els.respGemini.value=localStorage.getItem(SK.RESP_GEMINI)||'';
       els.respZai.value=localStorage.getItem(SK.RESP_ZAI)||'';
       els.respClaude.value=localStorage.getItem(SK.RESP_CLAUDE)||'';
+      els.respDeepseek.value=localStorage.getItem(SK.RESP_DEEPSEEK)||'';
       els.mode.value=localStorage.getItem(SK.MODE)||'antiyesman';
       els.custom.value=localStorage.getItem(SK.CUSTOM)||'';
       toggleCustom(els.mode.value);
