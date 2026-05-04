@@ -565,6 +565,24 @@
     if(!customFocused) toggleCustomFocus();
   });
 
+  // CLICK OUTSIDE TO COLLAPSE
+  document.addEventListener('mousedown', function(e){
+    // Collapse darma focus
+    if(focusedAi){
+      var focusedGroup = document.querySelector('.darma-group.focused');
+      if(focusedGroup && !focusedGroup.contains(e.target)){
+        toggleFocusMode(focusedAi);
+      }
+    }
+    // Collapse custom focus
+    if(customFocused){
+      var modeSec = controlsEl ? controlsEl.querySelector('.mode-section') : null;
+      if(modeSec && !modeSec.contains(e.target)){
+        toggleCustomFocus();
+      }
+    }
+  });
+
   // COPY ROTATIONAL
   function copyFor(target){
     var parts=[];
