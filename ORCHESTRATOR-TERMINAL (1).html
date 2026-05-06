@@ -13,6 +13,7 @@
     --text: #e0e0e6;
     --text-dim: #8888a0;
     --accent-kimi: #e879f9;
+    --accent-meta: #0081fb;
     --accent-gpt: #74aa9c;
     --accent-qwen: #f97316;
     --accent-gemini: #8b9cf7;
@@ -84,6 +85,7 @@
   }
   .darma-label { font-size:11px; font-weight:600; letter-spacing:0.3px; }
   .darma-label.kimi { color:var(--accent-kimi); }
+  .darma-label.meta { color:var(--accent-meta); }
   .darma-label.gpt { color:var(--accent-gpt); }
   .darma-label.qwen { color:var(--accent-qwen); }
   .darma-label.gemini { color:var(--accent-gemini); }
@@ -113,6 +115,7 @@
   .darma-textarea:focus { border-color:var(--text-dim); }
   .darma-textarea::placeholder { color:var(--text-dim); }
   .darma-textarea.kimi:focus { border-color:var(--accent-kimi); }
+  .darma-textarea.meta:focus { border-color:var(--accent-meta); }
   .darma-textarea.gpt:focus { border-color:var(--accent-gpt); }
   .darma-textarea.qwen:focus { border-color:var(--accent-qwen); }
   .darma-textarea.gemini:focus { border-color:var(--accent-gemini); }
@@ -166,6 +169,7 @@
   .btn-copy:hover { background:var(--btn-hover); }
   .btn-copy:active { background:var(--btn-active); }
   .btn-copy[data-target="kimi"] .dot { color:var(--accent-kimi); }
+  .btn-copy[data-target="meta"] .dot { color:var(--accent-meta); }
   .btn-copy[data-target="gpt"] .dot { color:var(--accent-gpt); }
   .btn-copy[data-target="qwen"] .dot { color:var(--accent-qwen); }
   .btn-copy[data-target="gemini"] .dot { color:var(--accent-gemini); }
@@ -208,6 +212,7 @@
   }
   .tab:hover { color:var(--text); background:var(--surface-alt); }
   .tab[data-tab="kimi"].active { color:var(--accent-kimi); border-bottom-color:var(--accent-kimi); }
+  .tab[data-tab="meta"].active { color:var(--accent-meta); border-bottom-color:var(--accent-meta); }
   .tab[data-tab="gpt"].active { color:var(--accent-gpt); border-bottom-color:var(--accent-gpt); }
   .tab[data-tab="qwen"].active { color:var(--accent-qwen); border-bottom-color:var(--accent-qwen); }
   .tab[data-tab="gemini"].active { color:var(--accent-gemini); border-bottom-color:var(--accent-gemini); }
@@ -226,6 +231,7 @@
     resize:none; outline:none; transition:border-color 0.2s;
   }
   .panel[data-panel="kimi"] textarea:focus { border-color:var(--accent-kimi); }
+  .panel[data-panel="meta"] textarea:focus { border-color:var(--accent-meta); }
   .panel[data-panel="gpt"] textarea:focus { border-color:var(--accent-gpt); }
   .panel[data-panel="qwen"] textarea:focus { border-color:var(--accent-qwen); }
   .panel[data-panel="gemini"] textarea:focus { border-color:var(--accent-gemini); }
@@ -247,7 +253,7 @@
 <body>
 
 <div class="header">
-  <div class="header-title"><span>OT</span> v0.1r5</div>
+  <div class="header-title"><span>OT</span> v0.1r6</div>
   <div class="save-indicator" id="saveIndicator">💾</div>
 </div>
 
@@ -265,6 +271,14 @@
           <button class="focus-btn" title="Focus mode">⤢</button>
         </div>
         <textarea id="darmaKimi" class="darma-textarea kimi" placeholder="Respon/arahan untuk Kimi..."></textarea>
+      </div>
+
+      <div class="darma-group" data-ai="meta">
+        <div class="darma-header">
+          <div class="darma-label meta">● Meta AI</div>
+          <button class="focus-btn" title="Focus mode">⤢</button>
+        </div>
+        <textarea id="darmaMeta" class="darma-textarea meta" placeholder="Respon/arahan untuk Meta AI..."></textarea>
       </div>
 
       <div class="darma-group" data-ai="gpt">
@@ -337,6 +351,9 @@
           <button class="btn-copy" data-target="kimi">
             <span class="dot">●</span> Copy for Kimi <span class="last-badge">LAST</span>
           </button>
+          <button class="btn-copy" data-target="meta">
+            <span class="dot">●</span> Copy for Meta AI <span class="last-badge">LAST</span>
+          </button>
           <button class="btn-copy" data-target="gpt">
             <span class="dot">●</span> Copy for ChatGPT <span class="last-badge">LAST</span>
           </button>
@@ -370,16 +387,20 @@
   <div class="col-right">
     <div class="tabs">
       <div class="tab active" data-tab="kimi">Kimi <span class="shortcut">Ctrl+1</span></div>
-      <div class="tab" data-tab="gpt">ChatGPT <span class="shortcut">Ctrl+2</span></div>
-      <div class="tab" data-tab="qwen">Qwen <span class="shortcut">Ctrl+3</span></div>
-      <div class="tab" data-tab="gemini">Gemini <span class="shortcut">Ctrl+4</span></div>
-      <div class="tab" data-tab="zai">Z.ai <span class="shortcut">Ctrl+5</span></div>
-      <div class="tab" data-tab="claude">Claude <span class="shortcut">Ctrl+6</span></div>
-      <div class="tab" data-tab="deepseek">DeepSeek <span class="shortcut">Ctrl+7</span></div>
+      <div class="tab" data-tab="meta">Meta <span class="shortcut">Ctrl+2</span></div>
+      <div class="tab" data-tab="gpt">ChatGPT <span class="shortcut">Ctrl+3</span></div>
+      <div class="tab" data-tab="qwen">Qwen <span class="shortcut">Ctrl+4</span></div>
+      <div class="tab" data-tab="gemini">Gemini <span class="shortcut">Ctrl+5</span></div>
+      <div class="tab" data-tab="zai">Z.ai <span class="shortcut">Ctrl+6</span></div>
+      <div class="tab" data-tab="claude">Claude <span class="shortcut">Ctrl+7</span></div>
+      <div class="tab" data-tab="deepseek">DeepSeek <span class="shortcut">Ctrl+8</span></div>
     </div>
     <div class="panels">
       <div class="panel active" data-panel="kimi">
         <textarea id="respKimi" placeholder="Paste respon Kimi di sini..."></textarea>
+      </div>
+      <div class="panel" data-panel="meta">
+        <textarea id="respMeta" placeholder="Paste respon Meta AI di sini..."></textarea>
       </div>
       <div class="panel" data-panel="gpt">
         <textarea id="respGpt" placeholder="Paste respon ChatGPT di sini..."></textarea>
@@ -410,12 +431,12 @@
   'use strict';
 
   var SK = {
-    DARMA_KIMI: 'ot_darma_kimi', DARMA_GPT: 'ot_darma_gpt', DARMA_QWEN: 'ot_darma_qwen',
-    DARMA_GEMINI: 'ot_darma_gemini', DARMA_ZAI: 'ot_darma_zai', DARMA_CLAUDE: 'ot_darma_claude',
-    DARMA_DEEPSEEK: 'ot_darma_deepseek',
-    RESP_KIMI: 'ot_resp_kimi', RESP_GPT: 'ot_resp_gpt', RESP_QWEN: 'ot_resp_qwen',
-    RESP_GEMINI: 'ot_resp_gemini', RESP_ZAI: 'ot_resp_zai', RESP_CLAUDE: 'ot_resp_claude',
-    RESP_DEEPSEEK: 'ot_resp_deepseek',
+    DARMA_KIMI: 'ot_darma_kimi', DARMA_META: 'ot_darma_meta', DARMA_GPT: 'ot_darma_gpt',
+    DARMA_QWEN: 'ot_darma_qwen', DARMA_GEMINI: 'ot_darma_gemini', DARMA_ZAI: 'ot_darma_zai',
+    DARMA_CLAUDE: 'ot_darma_claude', DARMA_DEEPSEEK: 'ot_darma_deepseek',
+    RESP_KIMI: 'ot_resp_kimi', RESP_META: 'ot_resp_meta', RESP_GPT: 'ot_resp_gpt',
+    RESP_QWEN: 'ot_resp_qwen', RESP_GEMINI: 'ot_resp_gemini', RESP_ZAI: 'ot_resp_zai',
+    RESP_CLAUDE: 'ot_resp_claude', RESP_DEEPSEEK: 'ot_resp_deepseek',
     MODE: 'ot_mode', CUSTOM: 'ot_custom_instruction',
     TAB: 'ot_active_tab', LAST_COPY: 'ot_last_copy'
   };
@@ -427,19 +448,21 @@
   };
 
   var ROTATION = {
-    kimi:     ['gpt','qwen','gemini','zai','claude','deepseek'],
-    gpt:      ['qwen','gemini','zai','claude','deepseek','kimi'],
-    qwen:     ['gemini','zai','claude','deepseek','kimi','gpt'],
-    gemini:   ['zai','claude','deepseek','kimi','gpt','qwen'],
-    zai:      ['claude','deepseek','kimi','gpt','qwen','gemini'],
-    claude:   ['deepseek','kimi','gpt','qwen','gemini','zai'],
-    deepseek: ['kimi','gpt','qwen','gemini','zai','claude']
+    kimi:     ['meta','gpt','qwen','gemini','zai','claude','deepseek'],
+    meta:     ['gpt','qwen','gemini','zai','claude','deepseek','kimi'],
+    gpt:      ['qwen','gemini','zai','claude','deepseek','kimi','meta'],
+    qwen:     ['gemini','zai','claude','deepseek','kimi','meta','gpt'],
+    gemini:   ['zai','claude','deepseek','kimi','meta','gpt','qwen'],
+    zai:      ['claude','deepseek','kimi','meta','gpt','qwen','gemini'],
+    claude:   ['deepseek','kimi','meta','gpt','qwen','gemini','zai'],
+    deepseek: ['kimi','meta','gpt','qwen','gemini','zai','claude']
   };
 
-  var AI_LABEL = { kimi:'respon kimi', gpt:'respon chatgpt', qwen:'respon qwen', gemini:'respon gemini', zai:'respon z.ai', claude:'respon claude', deepseek:'respon deepseek' };
+  var AI_LABEL = { kimi:'respon kimi', meta:'respon meta ai', gpt:'respon chatgpt', qwen:'respon qwen', gemini:'respon gemini', zai:'respon z.ai', claude:'respon claude', deepseek:'respon deepseek' };
 
   var els = {
     darmaKimi: document.getElementById('darmaKimi'),
+    darmaMeta: document.getElementById('darmaMeta'),
     darmaGpt: document.getElementById('darmaGpt'),
     darmaQwen: document.getElementById('darmaQwen'),
     darmaGemini: document.getElementById('darmaGemini'),
@@ -447,6 +470,7 @@
     darmaClaude: document.getElementById('darmaClaude'),
     darmaDeepseek: document.getElementById('darmaDeepseek'),
     respKimi: document.getElementById('respKimi'),
+    respMeta: document.getElementById('respMeta'),
     respGpt: document.getElementById('respGpt'),
     respQwen: document.getElementById('respQwen'),
     respGemini: document.getElementById('respGemini'),
@@ -460,8 +484,8 @@
     controls: document.getElementById('controlsArea')
   };
 
-  var darmaMap = { kimi:els.darmaKimi, gpt:els.darmaGpt, qwen:els.darmaQwen, gemini:els.darmaGemini, zai:els.darmaZai, claude:els.darmaClaude, deepseek:els.darmaDeepseek };
-  var respMap = { kimi:els.respKimi, gpt:els.respGpt, qwen:els.respQwen, gemini:els.respGemini, zai:els.respZai, claude:els.respClaude, deepseek:els.respDeepseek };
+  var darmaMap = { kimi:els.darmaKimi, meta:els.darmaMeta, gpt:els.darmaGpt, qwen:els.darmaQwen, gemini:els.darmaGemini, zai:els.darmaZai, claude:els.darmaClaude, deepseek:els.darmaDeepseek };
+  var respMap = { kimi:els.respKimi, meta:els.respMeta, gpt:els.respGpt, qwen:els.respQwen, gemini:els.respGemini, zai:els.respZai, claude:els.respClaude, deepseek:els.respDeepseek };
 
   // DEBOUNCE
   var timers = {};
@@ -475,6 +499,7 @@
   }
 
   els.darmaKimi.addEventListener('input', function(){debounceSave(SK.DARMA_KIMI,this.value);});
+  els.darmaMeta.addEventListener('input', function(){debounceSave(SK.DARMA_META,this.value);});
   els.darmaGpt.addEventListener('input', function(){debounceSave(SK.DARMA_GPT,this.value);});
   els.darmaQwen.addEventListener('input', function(){debounceSave(SK.DARMA_QWEN,this.value);});
   els.darmaGemini.addEventListener('input', function(){debounceSave(SK.DARMA_GEMINI,this.value);});
@@ -482,6 +507,7 @@
   els.darmaClaude.addEventListener('input', function(){debounceSave(SK.DARMA_CLAUDE,this.value);});
   els.darmaDeepseek.addEventListener('input', function(){debounceSave(SK.DARMA_DEEPSEEK,this.value);});
   els.respKimi.addEventListener('input', function(){debounceSave(SK.RESP_KIMI,this.value);});
+  els.respMeta.addEventListener('input', function(){debounceSave(SK.RESP_META,this.value);});
   els.respGpt.addEventListener('input', function(){debounceSave(SK.RESP_GPT,this.value);});
   els.respQwen.addEventListener('input', function(){debounceSave(SK.RESP_QWEN,this.value);});
   els.respGemini.addEventListener('input', function(){debounceSave(SK.RESP_GEMINI,this.value);});
@@ -696,19 +722,20 @@
   // SHORTCUTS
   document.addEventListener('keydown',function(e){
     if(e.ctrlKey&&e.key==='1'){e.preventDefault();switchTab('kimi');}
-    if(e.ctrlKey&&e.key==='2'){e.preventDefault();switchTab('gpt');}
-    if(e.ctrlKey&&e.key==='3'){e.preventDefault();switchTab('qwen');}
-    if(e.ctrlKey&&e.key==='4'){e.preventDefault();switchTab('gemini');}
-    if(e.ctrlKey&&e.key==='5'){e.preventDefault();switchTab('zai');}
-    if(e.ctrlKey&&e.key==='6'){e.preventDefault();switchTab('claude');}
-    if(e.ctrlKey&&e.key==='7'){e.preventDefault();switchTab('deepseek');}
+    if(e.ctrlKey&&e.key==='2'){e.preventDefault();switchTab('meta');}
+    if(e.ctrlKey&&e.key==='3'){e.preventDefault();switchTab('gpt');}
+    if(e.ctrlKey&&e.key==='4'){e.preventDefault();switchTab('qwen');}
+    if(e.ctrlKey&&e.key==='5'){e.preventDefault();switchTab('gemini');}
+    if(e.ctrlKey&&e.key==='6'){e.preventDefault();switchTab('zai');}
+    if(e.ctrlKey&&e.key==='7'){e.preventDefault();switchTab('claude');}
+    if(e.ctrlKey&&e.key==='8'){e.preventDefault();switchTab('deepseek');}
   });
 
   // CLEAR ALL
   document.getElementById('btnClear').addEventListener('click',function(){
     if(!confirm('Yakin hapus semua?')) return;
-    els.darmaKimi.value=''; els.darmaGpt.value=''; els.darmaQwen.value=''; els.darmaGemini.value=''; els.darmaZai.value=''; els.darmaClaude.value=''; els.darmaDeepseek.value='';
-    els.respKimi.value=''; els.respGpt.value=''; els.respQwen.value=''; els.respGemini.value=''; els.respZai.value=''; els.respClaude.value=''; els.respDeepseek.value='';
+    els.darmaKimi.value=''; els.darmaMeta.value=''; els.darmaGpt.value=''; els.darmaQwen.value=''; els.darmaGemini.value=''; els.darmaZai.value=''; els.darmaClaude.value=''; els.darmaDeepseek.value='';
+    els.respKimi.value=''; els.respMeta.value=''; els.respGpt.value=''; els.respQwen.value=''; els.respGemini.value=''; els.respZai.value=''; els.respClaude.value=''; els.respDeepseek.value='';
     els.custom.value=''; els.mode.value='antiyesman'; toggleCustom('antiyesman');
     if(focusedAi) toggleFocusMode(focusedAi);
     if(customFocused) toggleCustomFocus();
@@ -725,13 +752,13 @@
   // SAVE
   document.getElementById('btnSave').addEventListener('click',function(){
     var data={
-      version:'0.1r5',
-      darmaKimi:els.darmaKimi.value, darmaGpt:els.darmaGpt.value, darmaQwen:els.darmaQwen.value,
-      darmaGemini:els.darmaGemini.value, darmaZai:els.darmaZai.value, darmaClaude:els.darmaClaude.value,
-      darmaDeepseek:els.darmaDeepseek.value,
-      respKimi:els.respKimi.value, respGpt:els.respGpt.value, respQwen:els.respQwen.value,
-      respGemini:els.respGemini.value, respZai:els.respZai.value, respClaude:els.respClaude.value,
-      respDeepseek:els.respDeepseek.value,
+      version:'0.1r6',
+      darmaKimi:els.darmaKimi.value, darmaMeta:els.darmaMeta.value, darmaGpt:els.darmaGpt.value,
+      darmaQwen:els.darmaQwen.value, darmaGemini:els.darmaGemini.value, darmaZai:els.darmaZai.value,
+      darmaClaude:els.darmaClaude.value, darmaDeepseek:els.darmaDeepseek.value,
+      respKimi:els.respKimi.value, respMeta:els.respMeta.value, respGpt:els.respGpt.value,
+      respQwen:els.respQwen.value, respGemini:els.respGemini.value, respZai:els.respZai.value,
+      respClaude:els.respClaude.value, respDeepseek:els.respDeepseek.value,
       mode:els.mode.value, customInstruction:els.custom.value,
       activeTab:getActiveTab(), lastCopy:getLastCopy()
     };
@@ -772,12 +799,12 @@
       }
       if(!confirm('Ini akan menimpa semua data saat ini. Lanjutkan?')) return;
 
-      els.darmaKimi.value=data.darmaKimi||''; els.darmaGpt.value=data.darmaGpt||''; els.darmaQwen.value=data.darmaQwen||'';
-      els.darmaGemini.value=data.darmaGemini||''; els.darmaZai.value=data.darmaZai||''; els.darmaClaude.value=data.darmaClaude||'';
-      els.darmaDeepseek.value=data.darmaDeepseek||'';
-      els.respKimi.value=data.respKimi||''; els.respGpt.value=data.respGpt||''; els.respQwen.value=data.respQwen||'';
-      els.respGemini.value=data.respGemini||''; els.respZai.value=data.respZai||''; els.respClaude.value=data.respClaude||'';
-      els.respDeepseek.value=data.respDeepseek||'';
+      els.darmaKimi.value=data.darmaKimi||''; els.darmaMeta.value=data.darmaMeta||''; els.darmaGpt.value=data.darmaGpt||'';
+      els.darmaQwen.value=data.darmaQwen||''; els.darmaGemini.value=data.darmaGemini||''; els.darmaZai.value=data.darmaZai||'';
+      els.darmaClaude.value=data.darmaClaude||''; els.darmaDeepseek.value=data.darmaDeepseek||'';
+      els.respKimi.value=data.respKimi||''; els.respMeta.value=data.respMeta||''; els.respGpt.value=data.respGpt||'';
+      els.respQwen.value=data.respQwen||''; els.respGemini.value=data.respGemini||''; els.respZai.value=data.respZai||'';
+      els.respClaude.value=data.respClaude||''; els.respDeepseek.value=data.respDeepseek||'';
       els.mode.value=data.mode||'antiyesman'; els.custom.value=data.customInstruction||'';
       toggleCustom(els.mode.value);
       if(data.activeTab) switchTab(data.activeTab);
@@ -785,6 +812,7 @@
 
       try{
         localStorage.setItem(SK.DARMA_KIMI,els.darmaKimi.value);
+        localStorage.setItem(SK.DARMA_META,els.darmaMeta.value);
         localStorage.setItem(SK.DARMA_GPT,els.darmaGpt.value);
         localStorage.setItem(SK.DARMA_QWEN,els.darmaQwen.value);
         localStorage.setItem(SK.DARMA_GEMINI,els.darmaGemini.value);
@@ -792,6 +820,7 @@
         localStorage.setItem(SK.DARMA_CLAUDE,els.darmaClaude.value);
         localStorage.setItem(SK.DARMA_DEEPSEEK,els.darmaDeepseek.value);
         localStorage.setItem(SK.RESP_KIMI,els.respKimi.value);
+        localStorage.setItem(SK.RESP_META,els.respMeta.value);
         localStorage.setItem(SK.RESP_GPT,els.respGpt.value);
         localStorage.setItem(SK.RESP_QWEN,els.respQwen.value);
         localStorage.setItem(SK.RESP_GEMINI,els.respGemini.value);
@@ -811,6 +840,7 @@
   function loadFromStorage(){
     try{
       els.darmaKimi.value=localStorage.getItem(SK.DARMA_KIMI)||'';
+      els.darmaMeta.value=localStorage.getItem(SK.DARMA_META)||'';
       els.darmaGpt.value=localStorage.getItem(SK.DARMA_GPT)||'';
       els.darmaQwen.value=localStorage.getItem(SK.DARMA_QWEN)||'';
       els.darmaGemini.value=localStorage.getItem(SK.DARMA_GEMINI)||'';
@@ -818,6 +848,7 @@
       els.darmaClaude.value=localStorage.getItem(SK.DARMA_CLAUDE)||'';
       els.darmaDeepseek.value=localStorage.getItem(SK.DARMA_DEEPSEEK)||'';
       els.respKimi.value=localStorage.getItem(SK.RESP_KIMI)||'';
+      els.respMeta.value=localStorage.getItem(SK.RESP_META)||'';
       els.respGpt.value=localStorage.getItem(SK.RESP_GPT)||'';
       els.respQwen.value=localStorage.getItem(SK.RESP_QWEN)||'';
       els.respGemini.value=localStorage.getItem(SK.RESP_GEMINI)||'';
