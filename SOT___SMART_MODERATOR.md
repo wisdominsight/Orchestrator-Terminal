@@ -122,7 +122,7 @@ Smart Moderator: moderator pintar menyaring, hanya kirim **diff** (perbedaan/san
 [Telegram Bot — KENDALI JARAK JAUH]
    ├── Notifikasi keputusan vital & error
    ├── Perintah: /pause, /lanjut, /stop, /status
-   └── Persetujuan: OK/LANJUT, REVISI [teks], STOP
+   └── Persetujuan: A/B untuk keputusan vital, LANJUT/REVISI/STOP untuk error atau friction
 ```
 
 ### 4.2 Pembagian Tanggung Jawab  
@@ -210,8 +210,8 @@ Smart Moderator: moderator pintar menyaring, hanya kirim **diff** (perbedaan/san
 | `Session_ID` | ID sesi |
 | `Tipe` | `WAITING_DARMA` (keputusan vital) / `SYSTEM_FRICTION` (error/stuck/limit) |
 | `Pemicu` | Deskripsi masalah |
-| `Affects_Claim_ID` | (Opsional) `Claim_ID` yang terdampak, diisi Darma saat `LANJUT` |
-| `Resolusi_Darma` | `LANJUT`, `REVISI [teks]`, `STOP` |
+| `Affects_Claim_ID` | (Opsional) `Claim_ID` yang terdampak, diisi GAS secara internal. Darma tidak perlu melihat atau mengisi ID teknis. |
+| `Resolusi_Darma` | Untuk `WAITING_DARMA`: `A`, `B`, `REVISI [teks]`, `STOP`. Untuk `SYSTEM_FRICTION`: `LANJUT`, `REVISI [teks]`, `STOP`. |
 
 ### TAB 5: `SESSION_STATE` (Konfigurasi + Pointer Resume) – Final  
 | Kolom | Keterangan |
@@ -246,7 +246,7 @@ Smart Moderator: moderator pintar menyaring, hanya kirim **diff** (perbedaan/san
 ### 8.2 Vital Gate (Wajib Tanya Darma)  
 **Syarat:** `Konteks_Vital != TECHNICAL` dan klaim membutuhkan keputusan.  
 
-**Aksi:** `VITAL_TRIGGER` (Tipe: `WAITING_DARMA`), `Runtime_State = WAITING_DARMA`, notifikasi Telegram, pause sesi.
+**Aksi:** `VITAL_TRIGGER` (Tipe: `WAITING_DARMA`), `Runtime_State = WAITING_DARMA`, notifikasi Telegram, pause sesi. GAS wajib menyimpan paket pertanyaan awam ke kolom `Pemicu` sebelum mengirim notifikasi Telegram, agar keputusan Darma bisa diaudit ulang.
 
 **Aturan Bahasa Wajib untuk Darma:**  
 Saat sistem bertanya ke Darma, dilarang memakai jargon teknis sebagai inti pertanyaan. Sistem wajib menerjemahkan keputusan teknis menjadi bahasa awam yang menjelaskan:
@@ -269,7 +269,7 @@ Tetapi bertanya: "Apakah versi pertama cukup menangani 1 diskusi dulu, atau haru
 
 ### 8.4 Auto-REJECTED (Final – Sintesis Claude)  
 - **Jalur TECHNICAL:** Jika sebuah `REBUTTAL` ter-Auto-Promote, GAS otomatis set klaim yang disanggah (`Ref_ID`) → `REJECTED`.  
-- **Jalur VITAL:** TIDAK ADA auto-reject. Darma bisa menyebut `Affects_Claim_ID = CLM-xxx` di `VITAL_TRIGGER` saat membalas `LANJUT` — GAS set klaim itu `REJECTED`.  
+- **Jalur VITAL:** TIDAK ADA auto-reject. Darma cukup memilih `A`, `B`, `REVISI [teks]`, atau `STOP`. GAS yang memetakan pilihan Darma ke `Affects_Claim_ID` secara internal; Darma tidak perlu menyebut `Claim_ID`.  
 - Tidak ada `Rebuttal_Type` — pertahankan prinsip boring.
 
 ### 8.5 Cek Batas Putaran (`Max_Rounds`)  
@@ -488,6 +488,13 @@ Setiap perubahan terhadap struktur yang sudah dikunci wajib dicatat dengan **Imp
 | **KONTRAK BARU** | Skip AI dikembalikan via `Resolusi_Darma=LANJUT` pada error API (tanpa status enum baru). |
 | **BLAST RADIUS** | Tidak ada perubahan skema tab. Routing Logic §8 bertambah 1 aturan error handling. |
 
+### Impact Log 4: Bahasa awam untuk Vital Gate Darma  
+| Baris | Isi |
+|-------|-----|
+| **KONTRAK LAMA** | Pertanyaan vital ke Darma masih berisiko memakai istilah teknis mentah dan format jawaban `LANJUT`. |
+| **KONTRAK BARU** | Pertanyaan vital wajib memakai bahasa awam, menjelaskan dampak praktis, risiko, saran default, dan pilihan `A/B/REVISI/STOP`. |
+| **BLAST RADIUS** | Telegram prompt, `VITAL_TRIGGER.Resolusi_Darma`, `Affects_Claim_ID`, dan audit keputusan vital disesuaikan. |
+
 ---
 
 ## 14. BIAYA, KEAMANAN & RELIABILITAS  
@@ -502,7 +509,7 @@ Setiap perubahan terhadap struktur yang sudah dikunci wajib dicatat dengan **Imp
 | **Deduplikasi Event** | CacheService + `Payload_ID`. |
 | **Batas Putaran** | `Max_Rounds` (default 10), dicek sebelum panggil AI. Final Review di luar hitungan `Max_Rounds`. |
 | **Auto-Stop 24 Jam** | Jika Darma tidak respons → sesi dihentikan otomatis. |
-| **Kendali Manual** | Telegram: `/pause`, `/lanjut`, `/stop`, `/status`, `LANJUT`, `REVISI [teks]`, `STOP`. |
+| **Kendali Manual** | Telegram: `/pause`, `/lanjut`, `/stop`, `/status`. Untuk keputusan vital: `A`, `B`, `REVISI [teks]`, `STOP`. Untuk error/friction: `LANJUT`, `REVISI [teks]`, `STOP`. |
 | **Komunikasi** | Semua pesan sistem ke Darma wajib **bahasa Indonesia sederhana**, bukan jargon teknis. Jika menyangkut keputusan vital, sistem wajib menjelaskan dampak praktis, risiko, saran default, dan pilihan balasan sederhana. |
 
 ---
