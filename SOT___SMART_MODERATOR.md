@@ -58,7 +58,7 @@ Smart Moderator dibangun di atas kerangka kerja **5 Keputusan Vital + Change Gov
 **Tujuan:** Membangun **Smart Moderator** yang mampu:
 1. Membaca file lokal (SoT, bahan diskusi) tanpa tempel manual.  
 2. Mengurangi pengulangan – AI berikutnya tidak membaca ulang hal yang sudah diketahui.  
-3. Hanya bertanya ke Darma untuk **keputusan vital/int**, bukan teknis turunan.  
+3. Hanya bertanya ke Darma untuk **keputusan vital/inti**, bukan teknis turunan — dan wajib memakai bahasa Indonesia sederhana yang mudah dipahami orang awam, bukan jargon teknis.  
 4. Tetap menghasilkan validasi silang dan debat terarah.  
 
 **Prinsip Darma (tidak dapat ditawar):** Darma tetap AI Orchestrator, value creation maksimal, build kompleks selama opsi terbaik, kendali penuh di keputusan vital, teknis boleh diotomatisasi.
@@ -75,7 +75,7 @@ Smart Moderator: moderator pintar menyaring, hanya kirim **diff** (perbedaan/san
 1. **Context Filter** – menentukan bagian mana yang perlu dibaca AI berikutnya.  
 2. **Decision Ledger** – mencatat keputusan yang sudah/belum terkunci dan yang berubah.  
 3. **Duplication Guard** – mencegah AI mengulang argumen yang sudah dibahas.  
-4. **Vital Question Gate** – berhenti dan tanya Darma jika menyentuh keputusan vital.  
+4. **Vital Question Gate** – berhenti dan tanya Darma jika menyentuh keputusan vital, dengan bahasa awam, dampak praktis, dan pilihan jawaban sederhana.  
 5. **Technical Autopilot** – pembahasan teknis turunan berjalan otomatis.  
 6. **Final Adversarial Review** – 1–2 putaran terakhir untuk mencari celah, miss, dan inkonsistensi.
 
@@ -248,6 +248,18 @@ Smart Moderator: moderator pintar menyaring, hanya kirim **diff** (perbedaan/san
 
 **Aksi:** `VITAL_TRIGGER` (Tipe: `WAITING_DARMA`), `Runtime_State = WAITING_DARMA`, notifikasi Telegram, pause sesi.
 
+**Aturan Bahasa Wajib untuk Darma:**  
+Saat sistem bertanya ke Darma, dilarang memakai jargon teknis sebagai inti pertanyaan. Sistem wajib menerjemahkan keputusan teknis menjadi bahasa awam yang menjelaskan:
+1. Keputusan apa yang perlu dipilih.
+2. Dampak praktis dari setiap pilihan.
+3. Risiko jika salah memilih.
+4. Saran default AI.
+5. Format balasan sederhana: `A`, `B`, `REVISI [teks]`, atau `STOP`.
+
+**Contoh prinsip:**  
+Bukan bertanya: "Apakah multi-session concurrency masuk Core Now?"  
+Tetapi bertanya: "Apakah versi pertama cukup menangani 1 diskusi dulu, atau harus bisa banyak diskusi sekaligus? Jika banyak diskusi dari awal, sistem lebih rumit dan lebih rawan error. Saran aman: mulai dari 1 diskusi dulu."
+
 ### 8.3 Stuck Detection (Deteksi Macet)  
 **Syarat:** Klaim `DEBATABLE` dengan `Konteks_Vital != TECHNICAL` — konflik berulang tanpa kemajuan.  
 
@@ -328,6 +340,32 @@ Sistem **berhenti dan bertanya ke Darma** (via Telegram) jika mendeteksi perubah
 - Operational constraint (budget, hosting, keamanan)  
 - Perubahan besar pada arsitektur atau kontrak data  
 - Atau ketika AI sengaja menulis `[TANYA DARMA]` / `[MINTA PERSETUJUAN]`
+
+**Format Pertanyaan ke Darma:**  
+Setiap pertanyaan vital ke Darma wajib memakai struktur berikut:
+
+```text
+KEPUTUSAN YANG PERLU DARMA PILIH:
+[Jelaskan dengan bahasa awam, bukan jargon teknis]
+
+PILIHAN A:
+[Dampak praktis pilihan A]
+
+PILIHAN B:
+[Dampak praktis pilihan B]
+
+RISIKO UTAMA:
+[Apa yang bisa bermasalah jika salah memilih]
+
+SARAN AI:
+[Satu saran default yang paling aman]
+
+BALAS DENGAN:
+A / B / REVISI [teks] / STOP
+```
+
+**Larangan:**
+Jangan bertanya ke Darma dengan istilah teknis mentah seperti `concurrency`, `architecture-ready`, `Core Now`, `schema`, `runtime`, `payload`, atau `state machine` tanpa penjelasan awam.
 
 ### 9.5 Technical Autopilot  
 Jika diskusi hanya menyangkut `Konteks_Vital == TECHNICAL`, sistem **berjalan otomatis** tanpa interupsi Darma.
@@ -465,7 +503,7 @@ Setiap perubahan terhadap struktur yang sudah dikunci wajib dicatat dengan **Imp
 | **Batas Putaran** | `Max_Rounds` (default 10), dicek sebelum panggil AI. Final Review di luar hitungan `Max_Rounds`. |
 | **Auto-Stop 24 Jam** | Jika Darma tidak respons → sesi dihentikan otomatis. |
 | **Kendali Manual** | Telegram: `/pause`, `/lanjut`, `/stop`, `/status`, `LANJUT`, `REVISI [teks]`, `STOP`. |
-| **Komunikasi** | Semua pesan sistem ke Darma wajib **bahasa Indonesia sederhana**, bukan jargon teknis. |
+| **Komunikasi** | Semua pesan sistem ke Darma wajib **bahasa Indonesia sederhana**, bukan jargon teknis. Jika menyangkut keputusan vital, sistem wajib menjelaskan dampak praktis, risiko, saran default, dan pilihan balasan sederhana. |
 
 ---
 
@@ -537,7 +575,7 @@ Setiap perubahan terhadap struktur yang sudah dikunci wajib dicatat dengan **Imp
 1. **Persiapan:** Siapkan Google Sheet dengan 5 tab sesuai struktur final. Siapkan GAS dengan semua routing logic dan secret storage.  
 2. **Uji 1 AI dulu:** Jalankan dengan DeepSeek saja – validasi webhook → filter → insert `CLAIM_LEDGER` → notifikasi Telegram.  
 3. **Uji 2 AI:** Tambah Claude – pastikan AI kedua baca Diff Context dari `CLAIM_LEDGER`.  
-4. **Uji Rem Darurat:** Pancing AI sebut kata vital → pastikan sistem pause + notifikasi Telegram + Darma bisa `LANJUT`/`STOP`.  
+4. **Uji Rem Darurat:** Pancing AI sebut keputusan vital → pastikan sistem pause + notifikasi Telegram + pertanyaan ke Darma memakai bahasa awam, menjelaskan dampak praktis, dan Darma bisa balas `A` / `B` / `REVISI [teks]` / `STOP`.  
 5. **Uji Flow REVISI:** Darma kirim `REVISI[teks]` → pastikan AI yang sama dipanggil ulang.  
 6. **Uji Error API:** Simulasikan AI gagal → pastikan retry 1x, lalu `SYSTEM_FRICTION`, Darma `LANJUT` untuk skip.  
 7. **Uji Batas Putaran:** Set `Max_Rounds=2` → pastikan sistem berhenti setelah putaran terlampaui, Final Review tetap jalan.  
